@@ -1,9 +1,14 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
 import { UserRole } from '../enums/user-role.enum';
 import { UserProfile } from './user-profile.entity';
+import { Exclude, classToPlain } from 'class-transformer';
 
 @Entity()
 export class User {
+  constructor(partial: Partial<User>) {
+    Object.assign(this, partial);
+  }
+
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -14,6 +19,7 @@ export class User {
   email: string;
 
   @Column()
+  @Exclude()
   password: string;
 
   @Column({
@@ -31,4 +37,8 @@ export class User {
 
   @OneToOne(() => UserProfile, (profile) => profile.user)
   profile: UserProfile;
+
+  toJSON() {
+    return classToPlain(this);
+  }
 }
