@@ -93,12 +93,10 @@ export class UserService {
     const user = await this.findOne(id);
 
     // 更新用户基本信息
-    if (updateUserDto.username) user.username = updateUserDto.username;
     if (updateUserDto.email) user.email = updateUserDto.email;
     if (updateUserDto.password) {
       user.password = await bcrypt.hash(updateUserDto.password, 10);
     }
-    if (updateUserDto.role) user.role = updateUserDto.role;
 
     // 更新或创建用户配置文件
     if (!user.profile) {
