@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
@@ -29,8 +28,8 @@ export class CategoryController {
   }
 
   @Get()
-  findAll(@Query('page') page: number = 1, @Query('limit') limit: number = 10) {
-    return this.categoryService.findAll(page, limit);
+  findAll() {
+    return this.categoryService.findAll();
   }
 
   @Get(':id')

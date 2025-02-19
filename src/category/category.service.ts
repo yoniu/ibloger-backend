@@ -32,14 +32,12 @@ export class CategoryService {
     return this.categoryRepository.save(category);
   }
 
-  async findAll(page: number = 1, limit: number = 10) {
-    const [categories, total] = await this.categoryRepository.findAndCount({
-      skip: (page - 1) * limit,
-      take: limit,
+  async findAll() {
+    const categories = await this.categoryRepository.find({
       order: { createdAt: 'DESC' },
     });
 
-    return { categories, total };
+    return categories;
   }
 
   async findOne(id: number): Promise<Category> {
