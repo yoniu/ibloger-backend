@@ -17,14 +17,22 @@ export class CategoryService {
   ) {}
 
   async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
-    const { name } = createCategoryDto;
+    const { name, slug } = createCategoryDto;
 
     // 检查分类名称是否已存在
-    const existingCategory = await this.categoryRepository.findOne({
+    const existingCategoryByName = await this.categoryRepository.findOne({
       where: { name },
     });
-    if (existingCategory) {
+    if (existingCategoryByName) {
       throw new ConflictException('分类名称已存在');
+    }
+
+    // 检查 slug 是否已存在
+    const existingCategoryBySlug = await this.categoryRepository.findOne({
+      where: { slug },
+    });
+    if (existingCategoryBySlug) {
+      throw new ConflictException('分类 slug 已存在');
     }
 
     // 创建新分类
@@ -65,6 +73,16 @@ export class CategoryService {
       });
       if (existingCategory) {
         throw new ConflictException('分类名称已存在');
+      }
+    }
+
+    // 如果要更新 slug，检查新 slug 是否已存在
+    if (updateCategoryDto.slug && updateCategoryDto.slug !== category.slug) {
+      const existingCategory = await this.categoryRepository.findOne({
+        where: { slug: updateCategoryDto.slug },
+      });
+      if (existingCategory) {
+        throw new ConflictException('分类 slug 已存在');
       }
     }
 
