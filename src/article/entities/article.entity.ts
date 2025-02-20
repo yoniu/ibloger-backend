@@ -17,6 +17,9 @@ export class Article {
   @Column()
   title: string;
 
+  @Column({ unique: true })
+  slug: string;
+
   @Column({ nullable: true })
   subtitle: string;
 

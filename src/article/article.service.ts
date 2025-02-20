@@ -29,6 +29,14 @@ export class ArticleService {
       throw new NotFoundException('分类不存在');
     }
 
+    // 检查 slug 是否已存在
+    const existingArticle = await this.articleRepository.findOne({
+      where: { slug: createArticleDto.slug },
+    });
+    if (existingArticle) {
+      throw new ForbiddenException('文章路径已存在');
+    }
+
     const article = this.articleRepository.create({
       ...createArticleDto,
       category,
@@ -73,6 +81,16 @@ export class ArticleService {
         throw new NotFoundException('分类不存在');
       }
       article.category = category;
+    }
+
+    // 如果更新了 slug，检查是否与其他文章重复
+    if (updateArticleDto.slug && updateArticleDto.slug !== article.slug) {
+      const existingArticle = await this.articleRepository.findOne({
+        where: { slug: updateArticleDto.slug },
+      });
+      if (existingArticle) {
+        throw new ForbiddenException('文章路径已存在');
+      }
     }
 
     Object.assign(article, updateArticleDto);
