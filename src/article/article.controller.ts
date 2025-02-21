@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { CreateArticleDto } from './dto/create-article.dto';
@@ -16,18 +17,23 @@ import { GetUser } from '../auth/decorators/get-user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('article')
-@UseGuards(JwtAuthGuard)
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   create(@Body() createArticleDto: CreateArticleDto, @GetUser() user: User) {
     return this.articleService.create(createArticleDto, user);
   }
 
   @Get()
-  findAll(@GetUser() user: User) {
-    return this.articleService.findAll(user);
+  @UseGuards(JwtAuthGuard)
+  findAll(
+    @GetUser() user: User | null,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+  ) {
+    return this.articleService.findAll(user, +page, +limit);
   }
 
   @Get(':id')
@@ -36,6 +42,7 @@ export class ArticleController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   update(
     @Param('id') id: string,
     @Body() updateArticleDto: UpdateArticleDto,
@@ -45,6 +52,7 @@ export class ArticleController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: string, @GetUser() user: User) {
     return this.articleService.remove(+id, user);
   }

@@ -19,6 +19,8 @@ export class ArticleService {
     private readonly articleRepository: Repository<Article>,
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   async create(createArticleDto: CreateArticleDto, user: User) {
@@ -37,20 +39,62 @@ export class ArticleService {
       throw new ForbiddenException('文章路径已存在');
     }
 
+    // 从数据库中获取完整的用户实体
+    const author = await this.userRepository.findOne({
+      where: { id: user.id },
+    });
+    if (!author) {
+      throw new NotFoundException('用户不存在');
+    }
+
     const article = this.articleRepository.create({
       ...createArticleDto,
       category,
-      author: user,
+      author,
     });
 
     return this.articleRepository.save(article);
   }
 
-  async findAll(user: User) {
-    if (user.role === UserRole.ADMIN) {
-      return this.articleRepository.find();
+  async findAll(user: User | null, page = 1, limit = 10) {
+    const skip = (page - 1) * limit;
+
+    let query = this.articleRepository.createQueryBuilder('article');
+
+    if (!user) {
+      // 未登录用户只能看公开文章
+      query = query.where('article.isPublished = :isPublished', {
+        isPublished: true,
+      });
+    } else if (user.role === UserRole.ADMIN) {
+      // 管理员可以看所有文章
+      // 不需要添加任何条件
+    } else {
+      // 普通用户可以看自己的所有文章和其他人的公开文章
+      query = query.where(
+        '(article.author.id = :userId) OR (article.isPublished = :isPublished)',
+        {
+          userId: user.id,
+          isPublished: true,
+        },
+      );
     }
-    return this.articleRepository.find({ where: { author: { id: user.id } } });
+
+    const [articles, total] = await query
+      .leftJoinAndSelect('article.author', 'articleAuthor')
+      .leftJoinAndSelect('article.category', 'category')
+      .skip(skip)
+      .take(limit)
+      .orderBy('article.createdAt', 'DESC')
+      .getManyAndCount();
+
+    return {
+      items: articles,
+      total,
+      page,
+      limit,
+      totalPages: Math.ceil(total / limit),
+    };
   }
 
   async findOne(id: number, user: User) {
