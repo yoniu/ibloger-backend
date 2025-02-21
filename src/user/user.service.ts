@@ -64,7 +64,7 @@ export class UserService {
     }
 
     // 生成 JWT token
-    const payload = { sub: user.id, username: user.username, role: user.role };
+    const payload = { id: user.id, username: user.username, role: user.role };
     return {
       access_token: await this.jwtService.signAsync(payload),
       user: {
