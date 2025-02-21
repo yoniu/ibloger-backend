@@ -1,185 +1,527 @@
-# API 文档
+---
+title: ibloger
+language_tabs:
+  - shell: Shell
+  - http: HTTP
+  - javascript: JavaScript
+  - ruby: Ruby
+  - python: Python
+  - php: PHP
+  - java: Java
+  - go: Go
+toc_footers: []
+includes: []
+search: true
+code_clipboard: true
+highlight_theme: darkula
+headingLevel: 2
+generator: "@tarslib/widdershins v4.0.28"
 
-## 用户模块
+---
 
-### 用户注册
-- 请求方法：POST
-- URL：/user/register
-- 请求参数：
-  ```json
-  {
-    "username": "string",
-    "email": "string",
-    "password": "string"
-  }
-  ```
-- 返回示例：
-  ```json
-  {
-    "message": "注册成功",
-    "user": {
-      "id": "number",
-      "username": "string",
-      "email": "string",
-      "role": "string"
-    }
-  }
-  ```
+# ibloger
 
-### 用户登录
-- 请求方法：POST
-- URL：/user/login
-- 请求参数：
-  ```json
-  {
-    "username": "string",
-    "password": "string"
-  }
-  ```
-- 返回示例：包含用户信息和 token
+Base URLs:
 
-### 获取用户信息
-- 请求方法：GET
-- URL：/user/:id
-- 权限要求：需要登录，用户角色
-- 返回示例：
-  ```json
-  {
-    "message": "获取用户信息成功",
-    "user": {
-      "id": "number",
-      "username": "string",
-      "email": "string",
-      "role": "string"
-    }
-  }
-  ```
+# Authentication
 
-### 更新用户信息
-- 请求方法：PUT
-- URL：/user/:id
-- 权限要求：需要登录，用户角色
-- 请求参数：
-  ```json
-  {
-    "username": "string",
-    "email": "string"
-  }
-  ```
-- 返回示例：更新后的用户信息
+- HTTP Authentication, scheme: bearer
 
-### 获取用户列表
-- 请求方法：GET
-- URL：/user
-- 权限要求：需要登录，管理员角色
-- 查询参数：
-  - page：页码（默认：1）
-  - limit：每页数量（默认：10）
-- 返回示例：
-  ```json
-  {
-    "message": "获取用户列表成功",
-    "data": {
-      "users": "array",
-      "total": "number",
-      "page": "number",
-      "limit": "number"
-    }
-  }
-  ```
+# 鉴权
 
-### 删除用户
-- 请求方法：DELETE
-- URL：/user/:id
-- 权限要求：需要登录，管理员角色
-- 返回示例：
-  ```json
-  {
-    "message": "删除用户成功"
-  }
-  ```
+## POST 注册
 
-## 文章模块
+POST /user/register
 
-### 创建文章
-- 请求方法：POST
-- URL：/article
-- 权限要求：需要登录
-- 请求参数：
-  ```json
-  {
-    "title": "string",
-    "content": "string"
-  }
-  ```
+> Body 请求参数
 
-### 获取文章列表
-- 请求方法：GET
-- URL：/article
-- 权限要求：需要登录
+```json
+{
+  "username": "string",
+  "email": "string",
+  "password": "string"
+}
+```
 
-### 获取文章详情
-- 请求方法：GET
-- URL：/article/:id
-- 权限要求：需要登录
+### 请求参数
 
-### 更新文章
-- 请求方法：PATCH
-- URL：/article/:id
-- 权限要求：需要登录
-- 请求参数：
-  ```json
-  {
-    "title": "string",
-    "content": "string"
-  }
-  ```
+|名称|位置|类型|必选|说明|
+|---|---|---|---|---|
+|body|body|object| 否 |none|
+|» username|body|string| 是 |none|
+|» email|body|string| 是 |none|
+|» password|body|string| 是 |none|
 
-### 删除文章
-- 请求方法：DELETE
-- URL：/article/:id
-- 权限要求：需要登录
+> 返回示例
 
-## 分类模块
+> 200 Response
 
-### 创建分类
-- 请求方法：POST
-- URL：/categories
-- 权限要求：需要登录，管理员角色
-- 请求参数：
-  ```json
-  {
-    "name": "string",
-    "description": "string"
-  }
-  ```
+```json
+{}
+```
 
-### 获取分类列表
-- 请求方法：GET
-- URL：/categories
-- 权限要求：需要登录
-- 查询参数：
-  - page：页码（默认：1）
-  - limit：每页数量（默认：10）
+### 返回结果
 
-### 获取分类详情
-- 请求方法：GET
-- URL：/categories/:id
-- 权限要求：需要登录
+|状态码|状态码含义|说明|数据模型|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|Inline|
 
-### 更新分类
-- 请求方法：PATCH
-- URL：/categories/:id
-- 权限要求：需要登录，管理员角色
-- 请求参数：
-  ```json
-  {
-    "name": "string",
-    "description": "string"
-  }
-  ```
+### 返回数据结构
 
-### 删除分类
-- 请求方法：DELETE
-- URL：/categories/:id
-- 权限要求：需要登录，管理员角色
+## POST 登录
+
+POST /user/login
+
+> Body 请求参数
+
+```json
+{
+  "username": "string",
+  "email": "string",
+  "password": "string"
+}
+```
+
+### 请求参数
+
+|名称|位置|类型|必选|说明|
+|---|---|---|---|---|
+|body|body|object| 否 |none|
+|» username|body|string| 是 |none|
+|» email|body|string| 否 |none|
+|» password|body|string| 是 |none|
+
+> 返回示例
+
+> 200 Response
+
+```json
+{}
+```
+
+### 返回结果
+
+|状态码|状态码含义|说明|数据模型|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|Inline|
+
+### 返回数据结构
+
+# 用户功能
+
+## GET 获取用户资料
+
+GET /user/{id}
+
+### 请求参数
+
+|名称|位置|类型|必选|说明|
+|---|---|---|---|---|
+|id|path|string| 是 |none|
+
+> 返回示例
+
+> 200 Response
+
+```json
+{}
+```
+
+### 返回结果
+
+|状态码|状态码含义|说明|数据模型|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|Inline|
+
+### 返回数据结构
+
+## PUT  更新用户资料
+
+PUT /user/{id}
+
+> Body 请求参数
+
+```json
+{
+  "phoneNumber": "string",
+  "email": "string",
+  "password": "string",
+  "nickname": "string",
+  "avatarUrl": "string",
+  "description": "string"
+}
+```
+
+### 请求参数
+
+|名称|位置|类型|必选|说明|
+|---|---|---|---|---|
+|id|path|string| 是 |none|
+|body|body|object| 否 |none|
+|» phoneNumber|body|string| 否 |none|
+|» email|body|string| 否 |none|
+|» password|body|string| 否 |none|
+|» nickname|body|string| 否 |none|
+|» avatarUrl|body|string| 否 |none|
+|» description|body|string| 否 |none|
+
+> 返回示例
+
+> 200 Response
+
+```json
+{}
+```
+
+### 返回结果
+
+|状态码|状态码含义|说明|数据模型|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|Inline|
+
+### 返回数据结构
+
+## GET  获取用户列表
+
+GET /user
+
+> 返回示例
+
+> 200 Response
+
+```json
+{}
+```
+
+### 返回结果
+
+|状态码|状态码含义|说明|数据模型|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|Inline|
+
+### 返回数据结构
+
+# 分类
+
+## GET 获取所有分类
+
+GET /categories
+
+> 返回示例
+
+> 200 Response
+
+```json
+{}
+```
+
+### 返回结果
+
+|状态码|状态码含义|说明|数据模型|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|Inline|
+
+### 返回数据结构
+
+## POST 创建分类
+
+POST /categories
+
+> Body 请求参数
+
+```json
+{
+  "name": "string",
+  "slug": "string",
+  "description": "string"
+}
+```
+
+### 请求参数
+
+|名称|位置|类型|必选|说明|
+|---|---|---|---|---|
+|body|body|object| 否 |none|
+|» name|body|string| 是 |none|
+|» slug|body|string| 是 |none|
+|» description|body|string| 否 |none|
+
+> 返回示例
+
+> 200 Response
+
+```json
+{}
+```
+
+### 返回结果
+
+|状态码|状态码含义|说明|数据模型|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|Inline|
+
+### 返回数据结构
+
+## GET  获取分类信息
+
+GET /categories/{id}
+
+### 请求参数
+
+|名称|位置|类型|必选|说明|
+|---|---|---|---|---|
+|id|path|string| 是 |none|
+
+> 返回示例
+
+> 200 Response
+
+```json
+{}
+```
+
+### 返回结果
+
+|状态码|状态码含义|说明|数据模型|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|Inline|
+
+### 返回数据结构
+
+## PATCH 更新分类
+
+PATCH /categories/{id}
+
+> Body 请求参数
+
+```json
+{
+  "name": "string",
+  "slug": "string",
+  "description": "string"
+}
+```
+
+### 请求参数
+
+|名称|位置|类型|必选|说明|
+|---|---|---|---|---|
+|id|path|string| 是 |none|
+|body|body|object| 否 |none|
+|» name|body|string| 是 |none|
+|» slug|body|string| 是 |none|
+|» description|body|string| 否 |none|
+
+> 返回示例
+
+> 200 Response
+
+```json
+{}
+```
+
+### 返回结果
+
+|状态码|状态码含义|说明|数据模型|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|Inline|
+
+### 返回数据结构
+
+## DELETE  删除分类
+
+DELETE /categories/{id}
+
+### 请求参数
+
+|名称|位置|类型|必选|说明|
+|---|---|---|---|---|
+|id|path|string| 是 |none|
+
+> 返回示例
+
+> 200 Response
+
+```json
+{}
+```
+
+### 返回结果
+
+|状态码|状态码含义|说明|数据模型|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|Inline|
+
+### 返回数据结构
+
+# 文章
+
+## POST 新建文章
+
+POST /article
+
+> Body 请求参数
+
+```json
+{
+  "title": "string",
+  "slug": "string",
+  "subtitle": "string",
+  "coverImage": "string",
+  "content": "string",
+  "isPublished": true,
+  "categoryId": 0
+}
+```
+
+### 请求参数
+
+|名称|位置|类型|必选|说明|
+|---|---|---|---|---|
+|body|body|object| 否 |none|
+|» title|body|string| 是 |none|
+|» slug|body|string| 是 |none|
+|» subtitle|body|string| 否 |none|
+|» coverImage|body|string| 否 |none|
+|» content|body|string| 是 |none|
+|» isPublished|body|boolean| 否 |none|
+|» categoryId|body|integer| 是 |none|
+
+> 返回示例
+
+> 200 Response
+
+```json
+{}
+```
+
+### 返回结果
+
+|状态码|状态码含义|说明|数据模型|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|Inline|
+
+### 返回数据结构
+
+## GET  获取文章列表
+
+GET /article
+
+> 返回示例
+
+> 200 Response
+
+```json
+{}
+```
+
+### 返回结果
+
+|状态码|状态码含义|说明|数据模型|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|Inline|
+
+### 返回数据结构
+
+## GET  获取文章
+
+GET /article/{id}
+
+### 请求参数
+
+|名称|位置|类型|必选|说明|
+|---|---|---|---|---|
+|id|path|string| 是 |none|
+
+> 返回示例
+
+> 200 Response
+
+```json
+{}
+```
+
+### 返回结果
+
+|状态码|状态码含义|说明|数据模型|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|Inline|
+
+### 返回数据结构
+
+## PATCH  修改文章
+
+PATCH /article/{id}
+
+> Body 请求参数
+
+```json
+{
+  "title": "string",
+  "slug": "string",
+  "subtitle": "string",
+  "coverImage": "string",
+  "content": "string",
+  "isPublished": true,
+  "categoryId": 0
+}
+```
+
+### 请求参数
+
+|名称|位置|类型|必选|说明|
+|---|---|---|---|---|
+|id|path|string| 是 |none|
+|body|body|object| 否 |none|
+|» title|body|string| 否 |none|
+|» slug|body|string| 否 |none|
+|» subtitle|body|string| 否 |none|
+|» coverImage|body|string| 否 |none|
+|» content|body|string| 否 |none|
+|» isPublished|body|boolean| 否 |none|
+|» categoryId|body|integer| 否 |none|
+
+> 返回示例
+
+> 200 Response
+
+```json
+{}
+```
+
+### 返回结果
+
+|状态码|状态码含义|说明|数据模型|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|Inline|
+
+### 返回数据结构
+
+## DELETE  删除文章
+
+DELETE /article/{id}
+
+### 请求参数
+
+|名称|位置|类型|必选|说明|
+|---|---|---|---|---|
+|id|path|string| 是 |none|
+
+> 返回示例
+
+> 200 Response
+
+```json
+{}
+```
+
+### 返回结果
+
+|状态码|状态码含义|说明|数据模型|
+|---|---|---|---|
+|200|[OK](https://tools.ietf.org/html/rfc7231#section-6.3.1)|none|Inline|
+
+### 返回数据结构
+
+# 数据模型
+
