@@ -15,8 +15,10 @@ import { UpdateArticleDto } from './dto/update-article.dto';
 import { User } from '../user/entities/user.entity';
 import { GetUser } from '../auth/decorators/get-user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtPayloadGuard } from 'src/auth/guards/jwt-payload';
 
 @Controller('article')
+@UseGuards(JwtPayloadGuard)
 export class ArticleController {
   constructor(private readonly articleService: ArticleService) {}
 
@@ -27,7 +29,6 @@ export class ArticleController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
   findAll(
     @GetUser() user: User | null,
     @Query('page') page = 1,

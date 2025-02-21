@@ -107,7 +107,11 @@ export class ArticleService {
       throw new NotFoundException('文章不存在');
     }
 
-    if (user.role !== UserRole.ADMIN && article.author.id !== user.id) {
+    if (
+      user.role !== UserRole.ADMIN &&
+      article.author.id !== user.id &&
+      !article.isPublished
+    ) {
       throw new ForbiddenException('没有权限访问此文章');
     }
 
